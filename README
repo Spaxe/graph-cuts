@@ -1,0 +1,3 @@
+Quick and dirty implemention of graph cuts using OpenCL and C++.
+
+Based on chapter 29 of the GPU Computing Gems, "Fast Graph Cuts for Computer Vision"
