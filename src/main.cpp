@@ -10,14 +10,20 @@
 #include <cstring>
 #include "CL/cl.h"
 #include "main.h"
+#include "GraphCuts.h"
 using namespace std;
 
-#define KERNEL_FILE "test.opencl"
+#define KERNEL_FILE "kernels/test.opencl"
 
 int main(int argc, char* argv[])
-{
+{ 
+  GraphCuts gc("img/something", 8);
+  gc.print_image();
+  cin.get();
+  /*
   Main m;
   m.start();
+  */
   return 0;
 }
 
@@ -45,7 +51,7 @@ void Main::start()
   compute();
   print();
   cleanup();
-  cin.get();
+  //cin.get();
 }
 
 void Main::init()

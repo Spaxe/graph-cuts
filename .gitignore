@@ -43,6 +43,7 @@ _ReSharper*/
 [Bb]uild/
 eclipse-helios/
 .metadata/
+vs2010/CodeAnalyst/*
 
 #Binary files
 *.exe
