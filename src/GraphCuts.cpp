@@ -42,7 +42,7 @@ GraphCuts::GraphCuts(const char* image_path, int tolerance)
 
   // Hard code for testing
   // Source
-  excess_flow[150] = tolerance*4;
+  excess_flow[51] = tolerance*4;
 }
 
 GraphCuts::~GraphCuts()
@@ -57,9 +57,16 @@ GraphCuts::~GraphCuts()
 void GraphCuts::graph_cuts()
 {
   while(!finished_yet()) {
+    //printf("Calculating...\n");
+    
+    //print_excess_flow();
     relabel();
     push();
+    print_height();
+    getchar();
   }
+  //print_height();
+  //print_excess_flow();
 }
 
 /* Compare all neighbouring pixels of an active pixel by the edge capacity from 
@@ -78,8 +85,9 @@ void GraphCuts::relabel()
   for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
 
-      this_pixel = i*h+w;
+      this_pixel = i*h+j;
       if (active(this_pixel)) {
+        printf("Active pixel: %d\n", this_pixel);
         this_height = INF;                
 
         neighbour_pixel = this_pixel + right_offset;
@@ -125,16 +133,54 @@ void GraphCuts::push()
   for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
 
-      this_pixel = i*h+w;
+      this_pixel = i*h+j;
       if (active(this_pixel)) {
 
         neighbour_pixel = this_pixel + right_offset;
         to_neighbour = this_pixel*wh + neighbour_pixel;
         from_neighbour = neighbour_pixel*wh + this_pixel;
         if (j < w-1 && height[neighbour_pixel] == height[this_pixel]-1) {
-          flow = min(
+          flow = min(edge_capacity[to_neighbour], excess_flow[this_pixel]);
+          excess_flow[this_pixel] -= flow;
+          excess_flow[neighbour_pixel] += flow;
+          edge_capacity[to_neighbour] -= flow;
+          edge_capacity[from_neighbour] += flow;
         }
 
+        neighbour_pixel = this_pixel + left_offset;
+        to_neighbour = this_pixel*wh + neighbour_pixel;
+        from_neighbour = neighbour_pixel*wh + this_pixel;
+        if (j > 0 && height[neighbour_pixel] == height[this_pixel]-1) {
+          flow = min(edge_capacity[to_neighbour], excess_flow[this_pixel]);
+          excess_flow[this_pixel] -= flow;
+          excess_flow[neighbour_pixel] += flow;
+          edge_capacity[to_neighbour] -= flow;
+          edge_capacity[from_neighbour] += flow;
+        }
+
+        neighbour_pixel = this_pixel + top_offset;
+        to_neighbour = this_pixel*wh + neighbour_pixel;
+        from_neighbour = neighbour_pixel*wh + this_pixel;
+        if (i > 0 && height[neighbour_pixel] == height[this_pixel]-1) {
+          flow = min(edge_capacity[to_neighbour], excess_flow[this_pixel]);
+          excess_flow[this_pixel] -= flow;
+          excess_flow[neighbour_pixel] += flow;
+          edge_capacity[to_neighbour] -= flow;
+          edge_capacity[from_neighbour] += flow;
+        }
+
+        neighbour_pixel = this_pixel + bottom_offset;
+        to_neighbour = this_pixel*wh + neighbour_pixel;
+        from_neighbour = neighbour_pixel*wh + this_pixel;
+        if (i < h-1 && height[neighbour_pixel] == height[this_pixel]-1) {
+          flow = min(edge_capacity[to_neighbour], excess_flow[this_pixel]);
+          excess_flow[this_pixel] -= flow;
+          excess_flow[neighbour_pixel] += flow;
+          edge_capacity[to_neighbour] -= flow;
+          edge_capacity[from_neighbour] += flow;
+        }
+
+        //printf("Push complete\n");
       }
     }
   }

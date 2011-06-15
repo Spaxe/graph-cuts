@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
   gc.print_result_image();
   gc.print_height();
   gc.print_excess_flow();
+  gc.graph_cuts();
   cin.get();
   /*
   Main m;

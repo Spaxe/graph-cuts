@@ -9,7 +9,7 @@ public:
   // final input and output
   unsigned char *image;         
   unsigned char *result_image;  
-  unsigned int w, h, wh;
+  int w, h, wh;
 
   // Variables
   int *height;                 
