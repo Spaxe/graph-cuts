@@ -37,12 +37,27 @@ GraphCuts::GraphCuts(const char* image_path, int tolerance)
   for (int i = 0; i < wh; ++i)
     height[i] = image[i];    
   memset(excess_flow, 0, wh*sizeof(int));
-  for (int i = 0; i < wh*wh; ++i)
-    edge_capacity[i] = tolerance;
 
+  int top_offset = -h,
+      bottom_offset = h,
+      left_offset = -1,
+      right_offset = 1;
+  for (int i = 0; i < h; ++i) {
+    for (int j = 0; j < w; ++j) {
+      int this_pixel = i*h+j;
+      if (j < w-1)
+        edge_capacity[this_pixel*wh+this_pixel+right_offset] = height[this_pixel+right_offset] - height[this_pixel];
+      if (j > 0)
+        edge_capacity[this_pixel*wh+this_pixel+left_offset] = height[this_pixel+left_offset] - height[this_pixel];
+      if (i > 0)
+        edge_capacity[this_pixel*wh+this_pixel+top_offset] = height[this_pixel+top_offset] - height[this_pixel];
+      if (i < h-1)
+        edge_capacity[this_pixel*wh+this_pixel+bottom_offset] = height[this_pixel+bottom_offset] - height[this_pixel];
+    } 
+  }
   // Hard code for testing
   // Source
-  excess_flow[51] = tolerance*4;
+  excess_flow[51] = tolerance;
 }
 
 GraphCuts::~GraphCuts()
@@ -58,15 +73,14 @@ void GraphCuts::graph_cuts()
 {
   while(!finished_yet()) {
     //printf("Calculating...\n");
-    
-    //print_excess_flow();
     relabel();
     push();
-    print_height();
-    getchar();
+    //print_height();
+    //print_excess_flow();
+    //getchar();
   }
-  //print_height();
-  //print_excess_flow();
+  print_height();
+  print_excess_flow();
 }
 
 /* Compare all neighbouring pixels of an active pixel by the edge capacity from 
@@ -87,7 +101,7 @@ void GraphCuts::relabel()
 
       this_pixel = i*h+j;
       if (active(this_pixel)) {
-        printf("Active pixel: %d\n", this_pixel);
+        //printf("Active pixel: %d\n", this_pixel);
         this_height = INF;                
 
         neighbour_pixel = this_pixel + right_offset;
