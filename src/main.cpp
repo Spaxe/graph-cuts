@@ -19,6 +19,9 @@ int main(int argc, char* argv[])
 { 
   GraphCuts gc("img/something", 8);
   gc.print_image();
+  gc.print_result_image();
+  gc.print_height();
+  gc.print_excess_flow();
   cin.get();
   /*
   Main m;

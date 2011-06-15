@@ -1,4 +1,4 @@
-/// Graph Cuts Algorithm
+/// Graph Cuts Algorithm, referencing Ch. 29 of the GPU Computing Gems, 2011
 /// For Brisbane GPU Users, 16 June 2011
 /// Xavie Ho [contact@xavierho.com]
 #pragma once
@@ -9,7 +9,7 @@ public:
   // final input and output
   unsigned char *image;         
   unsigned char *result_image;  
-  unsigned int w, h;
+  unsigned int w, h, wh;
 
   // Variables
   int *height;                 
@@ -27,6 +27,8 @@ public:
   void graph_cuts();
   void push();
   void relabel();
+  bool finished_yet();
+  bool active(int x);
 
   // Trace functions
   void print_image();
